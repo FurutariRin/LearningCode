@@ -1,2 +1,1 @@
-special-vendored-path/* linguist-vendored
-jquery.html linguist-vendored=false
+*.html linguist-language=Python
