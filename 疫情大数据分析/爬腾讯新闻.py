@@ -9,7 +9,7 @@ head = {
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)"
 }
 req = requests.get(url).json()
-filePath = "爬虫数据\\新闻数据\\每日新闻.csv"
+filePath = "疫情大数据分析\\爬虫数据\\新闻数据\\每日新闻.csv"
 f = open(filePath, "w", encoding="utf-8")
 csv_writer = csv.writer(f)
 csv_writer.writerow(["新闻标题", "URL", "IMGURL", "作者", "发布时间"])

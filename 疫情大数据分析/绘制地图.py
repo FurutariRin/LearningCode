@@ -14,11 +14,11 @@ def getData(date: str):
     return 当日数据\n
     """
     AllData = []
-    provinceData = pd.read_csv("爬虫数据\\代号意义.csv", encoding="utf-8")
+    provinceData = pd.read_csv("疫情大数据分析\\爬虫数据\\代号意义.csv", encoding="utf-8")
     # 遍历所有省份
     for i in range(0, 33):
         # 省份对应文件
-        filePath = "爬虫数据\\预处理数据\\" + str(i) + ".csv"
+        filePath = "疫情大数据分析\\爬虫数据\\预处理数据\\" + str(i) + ".csv"
         # 读取文件
         data = pd.read_csv(filePath, encoding="utf-8")
         time_tuple = time.strptime(str(data["日期"][data["日期"].argmax()]),
@@ -133,4 +133,4 @@ map_country.set_global_opts(
 map_country.add("现存", currentConfirmedCount_data, maptype="china")
 map_country.add("确诊", confirmedCount_data, maptype="china")
 #一切完成，那么生成一个html网页文件。
-map_country.render("Project2\\网址\\中国疫情数据.html")
+map_country.render("疫情大数据分析\\网址\\中国疫情数据.html")

@@ -2,7 +2,7 @@ import pandas as pd
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
-path = "爬虫数据\\省份最新数据统计.csv"
+path = "疫情大数据分析\\爬虫数据\\省份最新数据统计.csv"
 wc = WordCloud(
     font_path=
     "C:\\Users\\FurutariRin\\AppData\\Local\\Microsoft\\Windows\\Fonts\\SourceHanSansCN-Bold.otf",
@@ -17,4 +17,4 @@ wc.generate_from_frequencies(dic)
 plt.imshow(wc)
 plt.axis("off")
 # plt.show()
-wc.to_file("Project2\\图\\词云图.png")
+wc.to_file("疫情大数据分析\\图\\词云图.png")

@@ -2,7 +2,7 @@ import pandas as pd
 import csv
 from tqdm import tqdm
 
-fileName = "爬虫数据\\省份最新数据统计.csv"
+fileName = "疫情大数据分析\\爬虫数据\\省份最新数据统计.csv"
 f = open(fileName, "w", encoding="utf-8", newline="")
 csv_writer = csv.writer(f)
 csv_writer.writerow([
@@ -10,9 +10,9 @@ csv_writer.writerow([
     "新增死亡", "高风险地区数", "中风险地区数", "疑似总数", "新增疑似"
 ])
 for i in tqdm(range(0, 34), desc="写入省份最新数据", unit="个省"):
-    filePath = "爬虫数据\\预处理数据\\" + str(i) + ".csv"
+    filePath = "疫情大数据分析\\爬虫数据\\预处理数据\\" + str(i) + ".csv"
     data = pd.read_csv(filePath, encoding="utf-8")
-    area = pd.read_csv("爬虫数据\\代号意义.csv", encoding="utf-8")
+    area = pd.read_csv("疫情大数据分析\\爬虫数据\\代号意义.csv", encoding="utf-8")
     MaxDate = str(data["日期"][data["日期"].argmax()])
     ibasho = area["意义"][i]
     confirmedCount = data.iloc[data["日期"].argmax()]["确诊总数"]

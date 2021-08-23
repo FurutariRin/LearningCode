@@ -5,7 +5,7 @@ import tqdm
 import csv
 
 for i in range(0, 34):
-    fileName = "爬虫数据\\初始数据\\" + str(i) + ".csv"
+    fileName = "疫情大数据分析\\爬虫数据\\初始数据\\" + str(i) + ".csv"
     data = pd.read_csv(fileName, encoding="utf-8")
     MinDate = datetime.date(1970, 1, 1)
     time_tuple = time.strptime(str(data["日期"][data["日期"].argmin()]), "%Y%m%d")
@@ -17,11 +17,11 @@ print(MinDate)
 
 # for m in tqdm.tqdm(range(100)):
 for i in tqdm.tqdm(range(0, 34), unit="个省", desc="处理省份疫情数据"):
-    fileName = "爬虫数据\\初始数据\\" + str(i) + ".csv"
+    fileName = "疫情大数据分析\\爬虫数据\\初始数据\\" + str(i) + ".csv"
     data = pd.read_csv(fileName, encoding="utf-8")
     # pretreatmentData = pd.DataFrame()
     UseDate = MinDate
-    fileName = "爬虫数据\\预处理数据\\" + str(i) + ".csv"
+    fileName = "疫情大数据分析\\爬虫数据\\预处理数据\\" + str(i) + ".csv"
     f = open(fileName, "w", encoding="utf-8", newline="")
     csv_writer = csv.writer(f)
     csv_writer.writerow([

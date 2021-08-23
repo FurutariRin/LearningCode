@@ -5,7 +5,7 @@ import numpy as np
 
 pyplt = py.offline.plot
 
-url = "爬虫数据\\全国数据.csv"
+url = "疫情大数据分析\\爬虫数据\\全国数据.csv"
 data = pd.read_csv(url)
 Start = str(data["日期"][data["日期"].argmin()])
 End = str(data["日期"][data["日期"].argmax()])
@@ -92,4 +92,4 @@ figure.update_layout(
     template="plotly_white",
 )
 
-pyplt(figure, filename="Project2\\网址\\折线图.html", show_link=False)
+pyplt(figure, filename="疫情大数据分析\\网址\\折线图.html", show_link=False)

@@ -118,7 +118,7 @@ print("\n我爬完了")
 # print(len(AllData[0]["Data"][0].dateId))
 n = 0
 while n < len(AllData):
-    fileName = "爬虫数据\\初始数据\\" + str(n) + ".csv"
+    fileName = "疫情大数据分析\\爬虫数据\\初始数据\\" + str(n) + ".csv"
     # print(str(n)+","+AllData[n]["area"])
     f = open(fileName, "w", encoding="utf-8", newline="")
     csv_writer = csv.writer(f)

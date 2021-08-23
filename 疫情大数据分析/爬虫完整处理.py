@@ -102,7 +102,7 @@ while i < len(data):
 n = 0
 
 while n < len(AllData):
-    fileName = "爬虫数据\\初始数据\\" + str(n) + ".csv"
+    fileName = "疫情大数据分析\\爬虫数据\\初始数据\\" + str(n) + ".csv"
     f = open(fileName, "w", encoding="utf-8", newline="")
     csv_writer = csv.writer(f)
     csv_writer.writerow([
@@ -138,7 +138,7 @@ import csv
 
 i = 0
 for i in range(0, 34):
-    fileName = "爬虫数据\\初始数据\\" + str(i) + ".csv"
+    fileName = "疫情大数据分析\\爬虫数据\\初始数据\\" + str(i) + ".csv"
     data = pd.read_csv(fileName, encoding="utf-8")
     MinDate = datetime.date(1970, 1, 1)
     time_tuple = time.strptime(str(data["日期"][data["日期"].argmin()]), "%Y%m%d")
@@ -149,10 +149,10 @@ for i in range(0, 34):
 
 i = 0
 for i in tqdm.tqdm(range(0, 34), unit="个省", desc="处理省份疫情数据"):
-    fileName = "爬虫数据\\初始数据\\" + str(i) + ".csv"
+    fileName = "疫情大数据分析\\爬虫数据\\初始数据\\" + str(i) + ".csv"
     data = pd.read_csv(fileName, encoding="utf-8")
     UseDate = MinDate
-    fileName = "爬虫数据\\预处理数据\\" + str(i) + ".csv"
+    fileName = "疫情大数据分析\\爬虫数据\\预处理数据\\" + str(i) + ".csv"
     f = open(fileName, "w", encoding="utf-8", newline="")
     csv_writer = csv.writer(f)
     csv_writer.writerow([
@@ -219,14 +219,14 @@ import pandas as pd
 import csv
 from tqdm import tqdm
 
-fileName = "爬虫数据\\全国数据.csv"
+fileName = "疫情大数据分析\\爬虫数据\\全国数据.csv"
 f = open(fileName, "w", encoding="utf-8", newline="")
 csv_writer = csv.writer(f)
 csv_writer.writerow([
     "日期", "确诊总数", "今日确诊数", "治愈总数", "治愈新增", "现存感染数", "现存增加数", "死亡人数", "新增死亡",
     "高风险地区数", "中风险地区数", "疑似总数", "新增疑似"
 ])
-UseData = pd.read_csv("爬虫数据\\预处理数据\\0.csv")
+UseData = pd.read_csv("疫情大数据分析\\爬虫数据\\预处理数据\\0.csv")
 i = 0
 for i in tqdm(range(len(UseData)), desc="统计全国每日数据", unit="Day"):
     dateId = UseData.iloc[i]["日期"]
@@ -244,7 +244,7 @@ for i in tqdm(range(len(UseData)), desc="统计全国每日数据", unit="Day"):
     suspectedCountIncr = 0
     x = 0
     for x in range(0, 34):
-        filePath = "爬虫数据\\预处理数据\\" + str(x) + ".csv"
+        filePath = "疫情大数据分析\\爬虫数据\\预处理数据\\" + str(x) + ".csv"
         data = pd.read_csv(filePath, encoding="utf-8")
         confirmedCount = confirmedCount + data.iloc[i]["确诊总数"]
         confirmedIncr = confirmedIncr + data.iloc[i]["今日确诊数"]
@@ -269,7 +269,7 @@ import pandas as pd
 import csv
 from tqdm import tqdm
 
-fileName = "爬虫数据\\省份最新数据统计.csv"
+fileName = "疫情大数据分析\\爬虫数据\\省份最新数据统计.csv"
 f = open(fileName, "w", encoding="utf-8", newline="")
 csv_writer = csv.writer(f)
 csv_writer.writerow([
@@ -278,9 +278,9 @@ csv_writer.writerow([
 ])
 i = 0
 for i in tqdm(range(0, 34), desc="写入省份最新数据", unit="个省"):
-    filePath = "爬虫数据\\预处理数据\\" + str(i) + ".csv"
+    filePath = "疫情大数据分析\\爬虫数据\\预处理数据\\" + str(i) + ".csv"
     data = pd.read_csv(filePath, encoding="utf-8")
-    area = pd.read_csv("爬虫数据\\代号意义.csv", encoding="utf-8")
+    area = pd.read_csv("疫情大数据分析\\爬虫数据\\代号意义.csv", encoding="utf-8")
     MaxDate = str(data["日期"][data["日期"].argmax()])
     ibasho = area["意义"][i]
     confirmedCount = data.iloc[data["日期"].argmax()]["确诊总数"]

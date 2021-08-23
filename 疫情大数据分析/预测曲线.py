@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.optimize import curve_fit
 
-data = pd.read_csv("爬虫数据\\全国数据.csv")
+data = pd.read_csv("疫情大数据分析\\爬虫数据\\全国数据.csv")
 
 # 数据录入——请在这里修改或补充每日病例数，数据太多时用"\"表示换行
 confirmedCount = data.loc[0:100, "确诊总数"].to_list()
@@ -38,4 +38,4 @@ plt.ylabel('Number of Cases')  # 打印纵坐标标签
 plt.title('A Rough Simulation and Prediction')  # 打印图表名称
 plt.legend(loc='best')  # 打印图例说明
 # plt.show()  # 正式输出图表
-plt.savefig("Project2\\图\\预测曲线.png")
+plt.savefig("疫情大数据分析\\图\\预测曲线.png")
