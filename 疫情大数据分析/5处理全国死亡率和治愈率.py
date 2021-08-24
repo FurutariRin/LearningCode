@@ -12,7 +12,7 @@ for i in tqdm(range(len(UseData)), desc="计算死亡率与治愈率", unit="Day
     Date = UseData.iloc[i]["日期"]
     confirmedCount = UseData.iloc[i]["确诊总数"]
     curedCount = UseData.iloc[i]["治愈总数"]
-    deadCount = UseData.iloc[i]["新增死亡"]
+    deadCount = UseData.iloc[i]["死亡人数"]
     CDP = float(deadCount/confirmedCount)
     CCP = float(curedCount/confirmedCount)
     HDP = float(deadCount/(deadCount+curedCount))
