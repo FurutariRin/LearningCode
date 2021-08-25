@@ -1,15 +1,17 @@
 """
 该文件包括了自动生成初始数据，预处理数据，中国数据，省份最新数据的功能
 """
+from tqdm import tqdm
+import pandas as pd
+import time
 import datetime
+import json
 from bs4 import BeautifulSoup
-import urllib.request, urllib.error
+import urllib.request
+import urllib.error
 import re
-import jsonpath
 import requests
 import csv
-import time
-import pandas as pd
 import tqdm
 
 url = "https://ncov.dxy.cn/ncovh5/view/pneumonia"
@@ -18,37 +20,10 @@ head = {
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)"
 }
 statisticsData = re.compile(r'"statisticsData":"(.*?)"')
-provinceName = re.compile(r'"provinceName":"(.*?)"')
+provinceName = re.compile(r'"provinceShortName":"(.*?)"')
 
 
-class JsonData:
-    def __init__(self, province, jsonURL):
-        self.province = province
-        self.jsonURL = jsonURL
-
-
-class EpidemicData:
-    def __init__(self, confirmedCount, confirmedIncr, curedCount, curedIncr,
-                 currentConfirmedCount, currentConfirmedIncr, dateId,
-                 deadCount, deadIncr, highDangerCount, midDangerCount,
-                 suspectedCount, suspectedCountIncr):
-        self.confirmedCount = confirmedCount  #确诊总数
-        self.confirmedIncr = confirmedIncr  #今日确诊数
-        self.curedCount = curedCount  #治愈总数
-        self.curedIncr = curedIncr  #治愈新增
-        self.currentConfirmedCount = currentConfirmedCount  #现存感染数
-        self.currentConfirmedIncr = currentConfirmedIncr  #现存增加数
-        self.dateId = dateId  #日期
-        self.deadCount = deadCount  #死亡人数
-        self.deadIncr = deadIncr  #新增死亡
-        self.highDangerCount = highDangerCount  #高风险地区数
-        self.midDangerCount = midDangerCount  #中风险地区数
-        self.suspectedCount = suspectedCount  #疑似总数
-        self.suspectedCountIncr = suspectedCountIncr  #新增疑似
-
-
-def getJSON(url):  #获取JSONURL
-    dataList = ""
+def getJSON(url):  # 获取JSONURL
     req = urllib.request.Request(url, headers=head)
     res = urllib.request.urlopen(req)
     html = res.read().decode("utf-8")
@@ -57,84 +32,47 @@ def getJSON(url):  #获取JSONURL
         i = str(i)
         province = re.findall(provinceName, i)
         link = re.findall(statisticsData, i)
-        data = JsonData(province, link)
-        dataList = data
-    return dataList
-
-
-def getData(url):
-    data = []
-    res = requests.get(url).json()
-    dateId = jsonpath.jsonpath(res, "$..dateId")
-    confirmedCount = jsonpath.jsonpath(res, "$..confirmedCount")
-    confirmedIncr = jsonpath.jsonpath(res, "$..confirmedIncr")
-    curedCount = jsonpath.jsonpath(res, "$..curedCount")
-    curedIncr = jsonpath.jsonpath(res, "$..curedIncr")
-    currentConfirmedCount = jsonpath.jsonpath(res, "$..currentConfirmedCount")
-    currentConfirmedIncr = jsonpath.jsonpath(res, "$..currentConfirmedIncr")
-    deadCount = jsonpath.jsonpath(res, "$..deadCount")
-    deadIncr = jsonpath.jsonpath(res, "$..deadIncr")
-    highDangerCount = jsonpath.jsonpath(res, "$..highDangerCount")
-    midDangerCount = jsonpath.jsonpath(res, "$..midDangerCount")
-    suspectedCount = jsonpath.jsonpath(res, "$..suspectedCount")
-    suspectedCountIncr = jsonpath.jsonpath(res, "$..suspectedCountIncr")
-    epidemicData = EpidemicData(confirmedCount, confirmedIncr, curedCount,
-                                curedIncr, currentConfirmedCount,
-                                currentConfirmedIncr, dateId, deadCount,
-                                deadIncr, highDangerCount, midDangerCount,
-                                suspectedCount, suspectedCountIncr)
-    data.append(epidemicData)
-    return data
+        data = {"省份": province, "Json": link}
+    FinalData = []
+    for i in range(len(province)):
+        FinalData.append({"省份": data["省份"][i], "Json": data["Json"][i]})
+    return FinalData
 
 
 jsonData = getJSON(url)
 data = []
-for i in tqdm.tqdm(range(0, len(jsonData.jsonURL)),
-                   desc="处理JSON文件",
-                   unit="个文件"):
-    data.append(getData(jsonData.jsonURL[i]))
-AllData = []
-i = 0
-while i < len(data):
-    Data = dict(area=jsonData.province[i], Data=data[i])
-    AllData.append(Data)
-    i = i + 1
-n = 0
-
-while n < len(AllData):
-    fileName = "疫情大数据分析\\爬虫数据\\初始数据\\" + str(n) + ".csv"
+for i in tqdm.tqdm(range(len(jsonData)), desc="处理JSON文件", unit="files"):
+    res = requests.get(jsonData[i]["Json"]).json()
+    data.append({"Province": jsonData[i]["省份"], "Data": res["data"]})
+print("\n我爬完了")
+filePath = "疫情大数据分析\\爬虫数据\\初始数据\\初始数据.json"
+f = open(filePath, "w", encoding="utf-8", newline="")
+json.dump(data, f, ensure_ascii=False)
+# print(data[9]["Data"][565])
+for i in range(len(data)):
+    fileName = "疫情大数据分析\\爬虫数据\\初始数据\\" + str(i) + ".csv"
     f = open(fileName, "w", encoding="utf-8", newline="")
     csv_writer = csv.writer(f)
     csv_writer.writerow([
         "日期", "确诊总数", "今日确诊数", "治愈总数", "治愈新增", "现存感染数", "现存增加数", "死亡人数",
         "新增死亡", "高风险地区数", "中风险地区数", "疑似总数", "新增疑似"
     ])
-    m = 0
-    while m < len(AllData[n]["Data"][0].dateId):
-        csv_writer.writerow([
-            AllData[n]["Data"][0].dateId[m],
-            AllData[n]["Data"][0].confirmedCount[m],
-            AllData[n]["Data"][0].confirmedIncr[m],
-            AllData[n]["Data"][0].curedCount[m],
-            AllData[n]["Data"][0].curedIncr[m],
-            AllData[n]["Data"][0].currentConfirmedCount[m],
-            AllData[n]["Data"][0].currentConfirmedIncr[m],
-            AllData[n]["Data"][0].deadCount[m],
-            AllData[n]["Data"][0].deadIncr[m],
-            AllData[n]["Data"][0].highDangerCount[m],
-            AllData[n]["Data"][0].midDangerCount[m],
-            AllData[n]["Data"][0].suspectedCount[m],
-            AllData[n]["Data"][0].suspectedCountIncr[m]
-        ])
-        m = m + 1
+    for n in range(len(data[i]["Data"])):
+        csv_writer.writerow([data[i]["Data"][n]["dateId"],
+                             data[i]["Data"][n]["confirmedCount"],
+                             data[i]["Data"][n]["confirmedIncr"],
+                             data[i]["Data"][n]["curedCount"],
+                             data[i]["Data"][n]["curedIncr"],
+                             data[i]["Data"][n]["currentConfirmedCount"],
+                             data[i]["Data"][n]["currentConfirmedIncr"],
+                             data[i]["Data"][n]["deadCount"],
+                             data[i]["Data"][n]["deadIncr"],
+                             data[i]["Data"][n]["highDangerCount"],
+                             data[i]["Data"][n]["midDangerCount"],
+                             data[i]["Data"][n]["suspectedCount"],
+                             data[i]["Data"][n]["suspectedCountIncr"]])
     f.close()
-    n = n + 1
 
-import datetime
-import time
-import pandas as pd
-import tqdm
-import csv
 
 i = 0
 for i in range(0, 34):
@@ -215,9 +153,6 @@ for i in tqdm.tqdm(range(0, 34), unit="个省", desc="处理省份疫情数据")
         ])
     f.close()
 
-import pandas as pd
-import csv
-from tqdm import tqdm
 
 fileName = "疫情大数据分析\\爬虫数据\\全国数据.csv"
 f = open(fileName, "w", encoding="utf-8", newline="")
@@ -265,9 +200,6 @@ for i in tqdm(range(len(UseData)), desc="统计全国每日数据", unit="Day"):
     ])
 f.close()
 
-import pandas as pd
-import csv
-from tqdm import tqdm
 
 fileName = "疫情大数据分析\\爬虫数据\\省份最新数据统计.csv"
 f = open(fileName, "w", encoding="utf-8", newline="")
@@ -302,9 +234,6 @@ for i in tqdm(range(0, 34), desc="写入省份最新数据", unit="个省"):
     ])
 f.close()
 
-import pandas as pd
-import csv
-from tqdm import tqdm
 
 filePath = "疫情大数据分析\\爬虫数据\\全国死亡率与治愈率.csv"
 f = open(filePath, "w", encoding="utf-8", newline="")
