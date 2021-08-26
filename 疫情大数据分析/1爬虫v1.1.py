@@ -35,8 +35,12 @@ def getJSON(url):  # 获取JSONURL
 jsonData = getJSON(url)
 data = []
 for i in tqdm.tqdm(range(len(jsonData)), desc="处理JSON文件", unit="files"):
-    res = requests.get(jsonData[i]["Json"]).json()
-    data.append({"Province": jsonData[i]["省份"], "Data": res["data"]})
+    req=urllib.request.Request(jsonData[i]["Json"])
+    res=urllib.request.urlopen(req)
+    html=res.read().decode("utf-8")
+    jsondata=json.loads(html)
+    # res = requests.get(jsonData[i]["Json"]).json()
+    data.append({"Province": jsonData[i]["省份"], "Data": jsondata["data"]})
 print("\n我爬完了")
 filePath = "疫情大数据分析\\爬虫数据\\初始数据\\初始数据.json"
 f = open(filePath, "w", encoding="utf-8", newline="")

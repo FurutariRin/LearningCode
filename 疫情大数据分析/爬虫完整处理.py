@@ -12,7 +12,6 @@ import urllib.error
 import re
 import requests
 import csv
-import tqdm
 
 url = "https://ncov.dxy.cn/ncovh5/view/pneumonia"
 head = {
@@ -41,10 +40,14 @@ def getJSON(url):  # 获取JSONURL
 
 jsonData = getJSON(url)
 data = []
-for i in tqdm.tqdm(range(len(jsonData)), desc="处理JSON文件", unit="files"):
-    res = requests.get(jsonData[i]["Json"]).json()
-    data.append({"Province": jsonData[i]["省份"], "Data": res["data"]})
-print("\n我爬完了")
+for i in tqdm(range(len(jsonData)), desc="处理JSON文件", unit="files"):
+    req=urllib.request.Request(jsonData[i]["Json"])
+    res=urllib.request.urlopen(req)
+    html=res.read().decode("utf-8")
+    jsondata=json.loads(html)
+    # res = requests.get(jsonData[i]["Json"]).json()
+    data.append({"Province": jsonData[i]["省份"], "Data": jsondata["data"]})
+# print("\n我爬完了")
 filePath = "疫情大数据分析\\爬虫数据\\初始数据\\初始数据.json"
 f = open(filePath, "w", encoding="utf-8", newline="")
 json.dump(data, f, ensure_ascii=False)
@@ -86,7 +89,7 @@ for i in range(0, 34):
         MinDate = getDate
 
 i = 0
-for i in tqdm.tqdm(range(0, 34), unit="个省", desc="处理省份疫情数据"):
+for i in tqdm(range(0, 34), unit="个省", desc="处理省份疫情数据"):
     fileName = "疫情大数据分析\\爬虫数据\\初始数据\\" + str(i) + ".csv"
     data = pd.read_csv(fileName, encoding="utf-8")
     UseDate = MinDate
@@ -253,3 +256,5 @@ for i in tqdm(range(len(UseData)), desc="计算死亡率与治愈率", unit="Day
     csv_writer.writerow([Date, confirmedCount, curedCount,
                         deadCount, CDP, CCP, HDP, HCP])
 f.close()
+
+print("\n很高兴，没出任何问题")
